@@ -351,31 +351,38 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    document.querySelector('.place-bet-btn').addEventListener('click', async () => {
-        if (selectedCards.length === 0) {
-            alert('Please select at least one card.');
-            return;
-        }
-        const betAmount = selectedCards.length * 1; // 1 MATIC par carte
-        const amountToSend = web3.utils.toWei(betAmount.toString(), 'ether');
-        try {
-            const accounts = await web3.eth.getAccounts();
-            await contract.methods.purchaseMultipleCards(selectedCards).send({
-                from: accounts[0],
-                value: amountToSend
-            });
-            alert('Transaction successful!');
-            selectedCards.forEach(id => {
-                document.querySelector(`.card[data-id="${id}"]`).classList.add('selected-by-other');
-                document.querySelector(`.card[data-id="${id}"]`).classList.remove('selected');
-            });
-            selectedCards = [];
-            updateCardStatus();
-        } catch (error) {
-            console.error('Transaction failed:', error);
-            alert('Transaction failed. See console for details.');
-        }
-    });
+document.querySelector('.place-bet-btn').addEventListener('click', async () => {
+    console.log('Place Bet button clicked');  // Vérifiez si le clic est détecté
+    if (selectedCards.length === 0) {
+        alert('Please select at least one card.');
+        console.log('No cards selected');  // Vérifiez si la condition de sélection de carte est le problème
+        return;
+    }
+    const betAmount = selectedCards.length * 1; // 1 MATIC par carte
+    const amountToSend = web3.utils.toWei(betAmount.toString(), 'ether');  // Vérifiez si la conversion est correcte
+    console.log(`Amount to send: ${amountToSend} Wei`);  // Afficher le montant envoyé en Wei
+
+    try {
+        const accounts = await web3.eth.getAccounts();
+        console.log(`Sending from account: ${accounts[0]}`);  // Afficher le compte d'envoi
+        await contract.methods.purchaseMultipleCards(selectedCards).send({
+            from: accounts[0],
+            value: amountToSend
+        });
+        console.log('Transaction successful!');  // Confirmer le succès de la transaction
+        alert('Transaction successful!');
+        selectedCards.forEach(id => {
+            const cardElement = document.querySelector(`.card[data-id="${id}"]`);
+            cardElement.classList.add('selected-by-other');
+            cardElement.classList.remove('selected');
+        });
+        selectedCards = [];
+        updateCardStatus();
+    } catch (error) {
+        console.error('Transaction failed:', error);
+        alert('Transaction failed. See console for details.');
+    }
+});
 
     async function updateCardStatus() {
         const cards = document.querySelectorAll('.card');
