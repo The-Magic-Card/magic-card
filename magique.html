@@ -366,6 +366,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 from: accounts[0],
                 value: amountToSend
             });
+.on('confirmation', (confirmationNumber, receipt) => {
+    console.log('Transaction confirmed:', confirmationNumber);
+		
             alert('Transaction successful!');
             selectedCards.forEach(id => {
                 document.querySelector(`.card[data-id="${id}"]`).classList.add('selected-by-other');
