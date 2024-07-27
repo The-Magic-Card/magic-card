@@ -358,8 +358,9 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please select at least one card.');
             return;
         }
-        const betAmount = selectedCards.length * 1; // 1 matic per card
-        const amountToSend = web3.utils.toWei(betAmount.toString(), 'ether');
+    // Calcul du prix par carte en Wei, adapté au réseau Polygon (MATIC)
+    const pricePerCard = web3.utils.toWei('1', 'ether'); // Convertit 0.01 MATIC en Wei
+    const amountToSend = (pricePerCard * selectedCards.length).toString();
         try {
             const accounts = await web3.eth.getAccounts();
             await contract.methods.purchaseMultipleCards(selectedCards).send({
