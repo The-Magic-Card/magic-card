@@ -377,16 +377,7 @@ async function sendTransaction(contractMethod, methodArgs, fromAddress) {
 	
     // Gestionnaire d'événements pour placer les paris
     document.querySelector('.place-bet-btn').addEventListener('click', async () => {
-	     const cardIds = [1, 2, 3]; // Exemple d'IDs de cartes
-	    const fromAddress = await web3.eth.getAccounts().then(accounts => accounts[0]);
-	    
-    try {
-        const response = await sendTransaction(contract.methods.purchaseMultipleCards, [cardIds], fromAddress);
-        console.log('Transaction successful:', response);
-    } catch (error) {
-        console.error('Transaction failed:', error);
-    }
-});
+
         if (selectedCards.length === 0) {
             alert('Please select at least one card.');
             return;
