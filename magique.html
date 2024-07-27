@@ -129,6 +129,7 @@
 
  <script>
 document.addEventListener('DOMContentLoaded', function() {
+	console.log("DOM fully loaded and parsed");
     let web3;
     let contract;
     const connectButton = document.querySelector('.wallet-btn');
@@ -351,11 +352,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-document.querySelector('.place-bet-btn').addEventListener('click', async () => {
-    console.log('Place Bet button clicked');  // Vérifiez si le clic est détecté
-    if (selectedCards.length === 0) {
-        alert('Please select at least one card.');
-        console.log('No cards selected');  // Vérifiez si la condition de sélection de carte est le problème
+const placeBetButton = document.querySelector('.place-bet-btn');
+    if (placeBetButton) {
+        console.log("Place Bet Button found:", placeBetButton); // Vérifiez si le bouton est correctement sélectionné
+        
+        placeBetButton.addEventListener('click', function() {
+            console.log('Place Bet button was clicked'); // Vérifiez si le clic est détecté
+            alert('Button click detected!'); // Affiche une alerte pour confirmer l'action de clic
+        });
+    } else {
+        console.log("Place Bet Button not found, check your HTML and CSS selectors.");
+    }
         return;
     }
     const betAmount = selectedCards.length * 1; // 1 MATIC par carte
