@@ -351,21 +351,42 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-async function sendTransaction(contractMethod, params, fromAddress) {
-    const gasEstimate = await contractMethod.estimateGas(params);
-    const gasPrice = await web3.eth.getGasPrice();
-    const adjustedGasPrice = Number(gasPrice) * 1.9;  // Augmenter de 20% pour plus de rapidité
+async function sendTransaction(contractMethod, methodArgs, fromAddress) {
+    try {
+        // Estimation du gaz nécessaire pour la méthode du contrat
+        const gasEstimate = await contractMethod(...methodArgs).estimateGas({ from: fromAddress });
 
-    return contractMethod.send({
-        from: fromAddress,
-        gasPrice: adjustedGasPrice,
-        gas: gasEstimate
-    });
+        // Obtention du prix actuel du gaz et augmentation de 20%
+        let gasPrice = await web3.eth.getGasPrice();
+        gasPrice = web3.utils.toBN(gasPrice).mul(web3.utils.toBN(120)).div(web3.utils.toBN(100));
+
+        // Envoi de la transaction avec le gaz ajusté
+        const response = await contractMethod(...methodArgs).send({
+            from: fromAddress,
+            gasPrice: gasPrice.toString(),
+            gas: gasEstimate
+        });
+
+        return response;
+    } catch (error) {
+        console.error('Error sending transaction:', error);
+        throw error;
+    }
 }
 
 	
     // Gestionnaire d'événements pour placer les paris
     document.querySelector('.place-bet-btn').addEventListener('click', async () => {
+	     const cardIds = [1, 2, 3]; // Exemple d'IDs de cartes
+	    const fromAddress = await web3.eth.getAccounts().then(accounts => accounts[0]);
+	    
+    try {
+        const response = await sendTransaction(contract.methods.purchaseMultipleCards, [cardIds], fromAddress);
+        console.log('Transaction successful:', response);
+    } catch (error) {
+        console.error('Transaction failed:', error);
+    }
+});
         if (selectedCards.length === 0) {
             alert('Please select at least one card.');
             return;
