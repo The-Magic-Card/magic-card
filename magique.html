@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let contract;
     const connectButton = document.querySelector('.wallet-btn');
     const contentContainer = document.querySelector('.container');
-    const contractAddress = '0x125747243DEBE9B783B469a3eCAAC5bdE48eaAF2'; // Assurez-vous que c'est la bonne adresse
+    const contractAddress = '0xC5Ba6FF278e1870c25544231d10C90Dc9B88826d'; // Assurez-vous que c'est la bonne adresse
     const abi = [
 	{
 		"inputs": [],
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				"type": "uint256"
 			},
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "buyer",
 				"type": "address"
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "winner",
 				"type": "address"
