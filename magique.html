@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedCards = []; // Maintenant défini au niveau global
     const connectButton = document.querySelector('.wallet-btn');
     const contentContainer = document.querySelector('.container');
-    const contractAddress = '0x14f99FDA0BE668098E9B975d4CfA26CD40028F69'; // Assurez-vous que c'est la bonne adresse
+    const contractAddress = '0x14f99FDA0BE668098E9B975d4CfA26CD40028F69'; // Adresse du contrat
     const abi = [
 	{
 		"inputs": [],
@@ -165,39 +165,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		"inputs": [],
 		"name": "GameReset",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint8[]",
-				"name": "cardIds",
-				"type": "uint8[]"
-			}
-		],
-		"name": "purchaseMultipleCards",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "resetGame",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "newPrice",
-				"type": "uint256"
-			}
-		],
-		"name": "setCardPrice",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -283,6 +250,26 @@ document.addEventListener('DOMContentLoaded', function() {
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint8[]",
+				"name": "cardIds",
+				"type": "uint8[]"
+			}
+		],
+		"name": "purchaseMultipleCards",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "resetGame",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "rewardPool",
 		"outputs": [
@@ -293,6 +280,19 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "newPrice",
+				"type": "uint256"
+			}
+		],
+		"name": "setCardPrice",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -308,9 +308,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		"stateMutability": "view",
 		"type": "function"
 	}
-]; // Remplacez par l'ABI de votre contrat
+]; // ABI du contrat
 
-    // Fonction pour initialiser Web3 et se connecter à MetaMask
     async function initWeb3() {
         if (window.ethereum) {
             web3 = new Web3(window.ethereum);
@@ -332,7 +331,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     connectButton.addEventListener('click', initWeb3);
 
-    // Gestionnaire d'événements pour la sélection des cartes
+    async function calculateGasPrice() {
+        const baseGasPrice = await web3.eth.getGasPrice();
+        const adjustedGasPrice = web3.utils.toBN(baseGasPrice).mul(web3.utils.toBN(120)).div(web3.utils.toBN(100));
+        return adjustedGasPrice.toString();
+    }
+
     document.querySelector('.game-container').addEventListener('click', function(event) {
         const card = event.target.closest('.card');
         if (card && !card.classList.contains('selected-by-other')) {
@@ -341,7 +345,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Fonction pour basculer la sélection des cartes
     function toggleCardSelection(cardElement, cardId) {
         cardElement.classList.toggle('selected');
         if (cardElement.classList.contains('selected')) {
@@ -351,24 +354,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-
-	
-    // Gestionnaire d'événements pour placer les paris
     document.querySelector('.place-bet-btn').addEventListener('click', async () => {
-
         if (selectedCards.length === 0) {
             alert('Please select at least one card.');
             return;
         }
         const betAmount = selectedCards.length * 1; // 1 MATIC par carte
+        const gasPrice = await calculateGasPrice(); // Calculer le prix du gaz ajusté
         const amountToSend = web3.utils.toWei(betAmount.toString(), 'ether');
         try {
             const accounts = await web3.eth.getAccounts();
             await contract.methods.purchaseMultipleCards(selectedCards).send({
                 from: accounts[0],
+                gasPrice: gasPrice,
                 value: amountToSend
             });
-		
             alert('Transaction successful!');
             selectedCards.forEach(id => {
                 const cardElement = document.querySelector(`.card[data-id="${id}"]`);
@@ -383,7 +383,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Fonction pour mettre à jour l'état des cartes
     async function updateCardStatus() {
         const cards = document.querySelectorAll('.card');
         cards.forEach(async (card) => {
@@ -391,15 +390,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const isLocked = await contract.methods.cardLocked(cardId).call();
             card.classList.toggle('selected-by-other', isLocked);
             if (isLocked) {
-                card.classList.remove('selected'); // Ensure locked cards are not selectable
+                card.classList.remove('selected');
             }
         });
     }
 
-    // Mettre à jour régulièrement l'état des cartes
-    setInterval(updateCardStatus, 5000); // Regularly update card status
+    setInterval(updateCardStatus, 5000);
 });
 </script>
+
 
 
 
