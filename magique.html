@@ -133,8 +133,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let contract;
     const connectButton = document.querySelector('.wallet-btn');
     const contentContainer = document.querySelector('.container');
-    const contractAddress = '0x1f1B3fB77a68128Ea65aA52501797CA4BaD7CC04'; // Assurez-vous que c'est la bonne adresse
-    const abi = [
+    const contractAddress = '0x125747243DEBE9B783B469a3eCAAC5bdE48eaAF2'; // Assurez-vous que c'est la bonne adresse
+    const abi =[
 	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
@@ -218,13 +218,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		"type": "event"
 	},
 	{
-		"inputs": [],
-		"name": "withdrawUnclaimedRewards",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -270,25 +263,6 @@ document.addEventListener('DOMContentLoaded', function() {
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "cardId",
-				"type": "uint256"
-			}
-		],
-		"name": "isCardLocked",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
