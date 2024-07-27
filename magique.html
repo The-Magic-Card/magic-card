@@ -351,28 +351,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-async function sendTransaction(contractMethod, methodArgs, fromAddress) {
-    try {
-        // Estimation du gaz nécessaire pour la méthode du contrat
-        const gasEstimate = await contractMethod(...methodArgs).estimateGas({ from: fromAddress });
-
-        // Obtention du prix actuel du gaz et augmentation de 20%
-        let gasPrice = await web3.eth.getGasPrice();
-        gasPrice = web3.utils.toBN(gasPrice).mul(web3.utils.toBN(120)).div(web3.utils.toBN(100));
-
-        // Envoi de la transaction avec le gaz ajusté
-        const response = await contractMethod(...methodArgs).send({
-            from: fromAddress,
-            gasPrice: gasPrice.toString(),
-            gas: gasEstimate
-        });
-
-        return response;
-    } catch (error) {
-        console.error('Error sending transaction:', error);
-        throw error;
-    }
-}
 
 	
     // Gestionnaire d'événements pour placer les paris
