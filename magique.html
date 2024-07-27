@@ -128,8 +128,13 @@
 
 
  <script>
-        const contractAddress = '0x14f99FDA0BE668098E9B975d4CfA26CD40028F69';
-        const abi = [
+document.addEventListener('DOMContentLoaded', function() {
+    let web3;
+    let contract;
+    const connectButton = document.querySelector('.wallet-btn');
+    const contentContainer = document.querySelector('.container');
+    const contractAddress = '0x14f99FDA0BE668098E9B975d4CfA26CD40028F69'; // Assurez-vous que c'est la bonne adresse
+    const abi = [
 	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
@@ -302,69 +307,91 @@
 		"stateMutability": "view",
 		"type": "function"
 	}
-]
-; 
-        let web3;
-        let contract;
-        let selectedCards = [];
+]; // Insérez l'ABI correct ici
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const connectButton = document.querySelector('.wallet-btn');
-            const cardsContainer = document.querySelector('.game-container');
-            const placeBetButton = document.querySelector('.place-bet-btn');
+    async function initWeb3() {
+        if (window.ethereum) {
+            web3 = new Web3(window.ethereum);
+            try {
+                // Demander l'accès au compte et connecter MetaMask
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                contract = new web3.eth.Contract(abi, contractAddress);
+                console.log('MetaMask is connected and contract initialized!');
+                connectButton.innerText = 'Wallet Connected';
+                contentContainer.style.display = 'block'; // Afficher le contenu seulement si MetaMask est connecté
+                updateCardStatus();
+            } catch (error) {
+                console.error('Error connecting to MetaMask:', error);
+                alert('Failed to connect MetaMask. ' + error.message);
+            }
+        } else {
+            alert('MetaMask is not installed. Please install it to use this feature.');
+        }
+    }
 
-            connectButton.addEventListener('click', async function () {
-                if (window.ethereum) {
-                    web3 = new Web3(window.ethereum);
-                    try {
-                        await window.ethereum.request({ method: 'eth_requestAccounts' });
-                        contract = new web3.eth.Contract(abi, contractAddress);
-                        connectButton.textContent = 'Wallet Connected';
-                        console.log('Contract initialized and wallet connected.');
-                    } catch (error) {
-                        alert('Failed to connect MetaMask: ' + error.message);
-                    }
-                } else {
-                    alert('Please install MetaMask to use this feature.');
-                }
+    connectButton.addEventListener('click', initWeb3);
+
+    const cardsContainer = document.querySelector('.game-container');
+    cardsContainer.addEventListener('click', function(event) {
+        const card = event.target.closest('.card');
+        if (card && !card.classList.contains('selected-by-other')) {
+            const cardId = parseInt(card.dataset.id, 10);
+            toggleCardSelection(card, cardId);
+        }
+    });
+
+    function toggleCardSelection(cardElement, cardId) {
+        if (!cardElement.classList.contains('selected-by-other')) {
+            cardElement.classList.toggle('selected');
+            if (cardElement.classList.contains('selected')) {
+                selectedCards.push(cardId);
+            } else {
+                selectedCards = selectedCards.filter(id => id !== cardId);
+            }
+        }
+    }
+
+    document.querySelector('.place-bet-btn').addEventListener('click', async () => {
+        if (selectedCards.length === 0) {
+            alert('Please select at least one card.');
+            return;
+        }
+        const betAmount = selectedCards.length * 1; // 1 MATIC par carte
+        const amountToSend = web3.utils.toWei(betAmount.toString(), 'ether');
+        try {
+            const accounts = await web3.eth.getAccounts();
+            await contract.methods.purchaseMultipleCards(selectedCards).send({
+                from: accounts[0],
+                value: amountToSend
             });
-
-            cardsContainer.addEventListener('click', function (event) {
-                const card = event.target;
-                const cardId = card.dataset.id;
-                toggleCardSelection(card, cardId);
+            alert('Transaction successful!');
+            selectedCards.forEach(id => {
+                document.querySelector(`.card[data-id="${id}"]`).classList.add('selected-by-other');
+                document.querySelector(`.card[data-id="${id}"]`).classList.remove('selected');
             });
+            selectedCards = [];
+            updateCardStatus();
+        } catch (error) {
+            console.error('Transaction failed:', error);
+            alert('Transaction failed. See console for details.');
+        }
+    });
 
-            placeBetButton.addEventListener('click', async function () {
-                if (selectedCards.length === 0) {
-                    alert('Please select at least one card.');
-                    return;
-                }
-                const amountToSend = web3.utils.toWei('0.01', 'ether') * selectedCards.length;
-                try {
-                    const accounts = await web3.eth.getAccounts();
-                    await contract.methods.purchaseMultipleCards(selectedCards).send({
-                        from: accounts[0],
-                        value: amountToSend
-                    });
-                    alert('Transaction successful!');
-                    selectedCards = []; // Clear selected cards after a successful transaction
-                } catch (error) {
-                    console.error('Transaction failed: ' + error);
-                    alert('Transaction failed: ' + error.message);
-                }
-            });
-
-            function toggleCardSelection(cardElement, cardId) {
-                cardElement.classList.toggle('selected');
-                if (cardElement.classList.contains('selected')) {
-                    selectedCards.push(cardId);
-                } else {
-                    selectedCards = selectedCards.filter(id => id !== cardId);
-                }
+    async function updateCardStatus() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(async (card) => {
+            const cardId = parseInt(card.dataset.id, 10);
+            const isLocked = await contract.methods.cardLocked(cardId).call();
+            card.classList.toggle('selected-by-other', isLocked);
+            if (isLocked) {
+                card.classList.remove('selected'); // Ensure locked cards are not selectable
             }
         });
-    </script>
+    }
+
+    setInterval(updateCardStatus, 5000); // Regularly update card status
+});
+</script>
 
 
 
