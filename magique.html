@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const connectButton = document.querySelector('.wallet-btn');
     const contentContainer = document.querySelector('.container');
     const contractAddress = '0x125747243DEBE9B783B469a3eCAAC5bdE48eaAF2'; // Assurez-vous que c'est la bonne adresse
-    const abi =[
+    const abi = [
 	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
@@ -307,7 +307,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		"stateMutability": "view",
 		"type": "function"
 	}
-]; // Insérez l'ABI correct ici
+]; 
+
+// Insérez l'ABI correct ici
     let selectedCards = []; // Initialisation de la liste des cartes sélectionnées
 
     async function initWeb3() {
@@ -389,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    setInterval(updateCardStatus, 10000); // Regularly update card status
+    setInterval(updateCardStatus, 5000); // Regularly update card status
 });
 </script>
 
