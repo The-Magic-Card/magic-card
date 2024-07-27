@@ -102,7 +102,7 @@
       </div>
       
       <div class="controls">
-        <div class="min-bet"> Bet: 0.01 $BNB by card</div>
+        <div class="min-bet"> Bet: 1 $MATIC by card</div>
         <button class="place-bet-btn">Place Bet</button>
       </div>
       
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please select at least one card.');
             return;
         }
-        const betAmount = selectedCards.length * 0.01; // 0.01 BNB per card
+        const betAmount = selectedCards.length * 1; // 1 matic per card
         const amountToSend = web3.utils.toWei(betAmount.toString(), 'ether');
         try {
             const accounts = await web3.eth.getAccounts();
