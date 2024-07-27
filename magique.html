@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let contract;
     const connectButton = document.querySelector('.wallet-btn');
     const contentContainer = document.querySelector('.container');
-    const contractAddress = '0xC5Ba6FF278e1870c25544231d10C90Dc9B88826d'; // Assurez-vous que c'est la bonne adresse
+    const contractAddress = '0x21805aAc917b28D14be189d3C2c33b6243b1c797'; // Assurez-vous que c'est la bonne adresse
     const abi = [
 	{
 		"inputs": [],
@@ -145,12 +145,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		"inputs": [
 			{
 				"indexed": false,
-				"internalType": "uint256",
+				"internalType": "uint8",
 				"name": "cardId",
-				"type": "uint256"
+				"type": "uint8"
 			},
 			{
-				"indexed": true,
+				"indexed": false,
 				"internalType": "address",
 				"name": "buyer",
 				"type": "address"
@@ -168,9 +168,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	{
 		"inputs": [
 			{
-				"internalType": "uint256[]",
+				"internalType": "uint8[]",
 				"name": "cardIds",
-				"type": "uint256[]"
+				"type": "uint8[]"
 			}
 		],
 		"name": "purchaseMultipleCards",
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": true,
+				"indexed": false,
 				"internalType": "address",
 				"name": "winner",
 				"type": "address"
@@ -220,9 +220,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "uint8",
 				"name": "",
-				"type": "uint256"
+				"type": "uint8"
 			}
 		],
 		"name": "cardLocked",
@@ -239,9 +239,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "uint8",
 				"name": "",
-				"type": "uint256"
+				"type": "uint8"
 			}
 		],
 		"name": "cardOwners",
