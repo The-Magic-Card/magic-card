@@ -365,6 +365,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 from: accounts[0],
                 value: amountToSend
             });
+
+async function sendTransaction(contractMethod, params, fromAddress) {
+    const gasEstimate = await contractMethod.estimateGas(params);
+    const gasPrice = await web3.eth.getGasPrice();
+    const adjustedGasPrice = Number(gasPrice) * 1.2;  // Augmenter de 20% pour plus de rapidité
+
+    return contractMethod.send({
+        from: fromAddress,
+        gasPrice: adjustedGasPrice,
+        gas: gasEstimate
+    });
+}
+		
             alert('Transaction successful!');
             selectedCards.forEach(id => {
                 const cardElement = document.querySelector(`.card[data-id="${id}"]`);
