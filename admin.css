@@ -1,0 +1,398 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  color: #f3f3f3;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+}
+
+header {
+  background: rgba(15, 12, 41, 0.9);
+  padding: 15px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 20px rgba(243, 186, 47, 0.2);
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+nav ul li {
+  margin: 0 15px;
+}
+
+nav ul li a {
+  color: #f3ba2f;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  position: relative;
+  font-size: 1.1em;
+}
+
+nav ul li a:hover {
+  color: #ffffff;
+  text-shadow: 0 0 10px #f3ba2f;
+}
+
+.wallet-btn {
+  background: linear-gradient(45deg, #f3ba2f, #f0932b);
+  color: #24243e;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.wallet-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(243, 186, 47, 0.3);
+}
+
+h1 {
+  font-size: 3em;
+  text-align: center;
+  margin-bottom: 40px;
+  color: #f3ba2f;
+  font-family: 'Playfair Display', serif;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.game-container {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.game-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(243, 186, 47, 0.1) 0%, rgba(243, 186, 47, 0) 70%);
+  animation: shine 15s infinite linear;
+}
+
+@keyframes shine {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.game-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: rgba(243, 186, 47, 0.1);
+  border-radius: 10px;
+}
+
+.time-left, .grids-left {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #f3ba2f;
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(13, 1fr);
+  gap: 5px;
+  margin-bottom: 30px;
+  position: relative;
+  z-index: 1;
+  border: 8px solid #cd7f32;
+  border-radius: 15px;
+  padding: 10px;
+  background: #006600;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.card {
+  aspect-ratio: 2.5 / 3.5;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card.selected {
+  box-shadow: 0 0 0 4px #f3ba2f, 0 8px 16px rgba(243, 186, 47, 0.3);
+}
+
+.card.selected-by-other {
+  filter: brightness(0.6);
+  cursor: not-allowed;
+}
+
+.card.selected-by-other::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 50%;
+  background-image: url('https://cryptologos.cc/logos/binance-coin-bnb-logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+  position: relative;
+  z-index: 1;
+}
+
+.bet-input {
+  padding: 15px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1em;
+  background: rgba(255, 255, 255, 0.1);
+  color: #f3f3f3;
+  width: 200px;
+  transition: all 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.bet-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #f3ba2f;
+}
+
+.min-bet {
+  font-size: 0.9em;
+  color: #f3ba2f;
+  margin-bottom: 15px;
+}
+
+.place-bet-btn {
+  background: linear-gradient(45deg, #f3ba2f, #f0932b);
+  color: #24243e;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1em;
+}
+
+.place-bet-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(243, 186, 47, 0.3);
+}
+
+.crypto-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.crypto-icon {
+  position: absolute;
+  opacity: 0.1;
+  animation: float 20s infinite linear;
+}
+
+@keyframes float {
+  0% { transform: translateY(100vh) rotate(0deg); }
+  100% { transform: translateY(-100vh) rotate(360deg); }
+}
+
+footer {
+  background: rgba(15, 12, 41, 0.9);
+  color: #ecf0f1;
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 50px;
+}
+
+.game-rules {
+  background: rgba(243, 186, 47, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.game-rules h2 {
+  color: #f3ba2f;
+  margin-bottom: 10px;
+}
+
+.game-rules ol {
+  padding-left: 20px;
+}
+
+.game-rules li {
+  margin-bottom: 10px;
+}
+
+.total-bet {
+  background: rgba(243, 186, 47, 0.2);
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 20px;
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #f3ba2f;
+}
+
+/* Styles pour le tableau */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #f3f3f3;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th, td {
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+th {
+    background-color: rgba(243, 186, 47, 0.4);
+    color: #24243e;
+    font-weight: bold;
+}
+
+tbody tr:hover {
+    background-color: rgba(243, 186, 47, 0.25);
+    cursor: pointer;
+}
+
+/* Responsive design pour le tableau */
+@media screen and (max-width: 600px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    th, td {
+        padding: 10px;
+    }
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    tr {
+        margin: 0 0 20px 0;
+    }
+    tr:nth-child(even) {
+        background: none;
+    }
+    td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+    }
+    td:before {
+        position: absolute;
+        top: 12px;
+        left: 10px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        color: #f3ba2f;
+    }
+    td:nth-of-type(1):before { content: "Card ID"; }
+    td:nth-of-type(2):before { content: "Owner"; }
+    td:nth-of-type(3):before { content: "Unlock Time"; }
+}
+
+.time-remaining {
+    text-align: center;
+    background: rgba(243, 186, 47, 0.3);
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    max-width: 300px;
+}
+
+.time-left {
+    font-size: 2em;
+    font-weight: bold;
+    color: #24243e;
+}
+
+.reset-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#resetButton {
+    background-color: #f3ba2f; /* Couleur dorée */
+    color: #24243e; /* Couleur du texte */
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#resetButton:hover {
+    background-color: #f0932b; /* Couleur dorée plus foncée au survol */
+    transform: translateY(-2px); /* Effet de léger soulèvement au survol */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
