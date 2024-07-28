@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div id="ownerStatus"></div> <!-- Statut du propriétaire affiché ici -->
+<div class="admin-content" style="display:none;">
+<div class="time-remaining">
+    <h2>Time Remaining:</h2>
+    <div id="timeLeft" class="time-left">00:00:00</div>
+</div>
+
+<div class="reset-container">
+    <button id="resetButton" onclick="triggerDailyReset()">Reset Daily Game</button>
+</div>
+
+
+
+    <h1>Admin Dashboard</h1>
+    <div>
+      <h2> <div id="purchasedCountSection"> Number of Purchased Cards: <span id="purchasedCount">0</span></div></h2>
+	  <div id="winnerInfoSection">
+    <h2>Winner Information</h2>
+    <div id="winnerInfo">No winner yet.</div>
+</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Card ID</th>
+                    <th>Owner</th>
+                    <th>Unlock Time</th>
+                </tr>
+            </thead>
+            <tbody id="cardDetails">
+                <!-- Card details will be populated here -->
+            </tbody>
+        </table>
+    </div>
+	</div>
+
+<script src="https://cdn.jsdelivr.net/npm/web3@1.6.0/dist/web3.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let web3;
+    let contract;
+    const contractAddress = '0xa0f6B654A06d468C32311e7B86A54733c9631Dfb';
+    const abi =  [
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "cardId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "buyer",
+				"type": "address"
+			}
+		],
+		"name": "CardPurchased",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [],
+		"name": "GameReset",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "cardIds",
+				"type": "uint256[]"
+			}
+		],
+		"name": "purchaseMultipleCards",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "resetGame",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "newPrice",
+				"type": "uint256"
+			}
+		],
+		"name": "setCardPrice",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "winner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "WinnerPaid",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "cardLocked",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "cardOwners",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "cardPrice",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "rewardPool",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalCardsPurchased",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+        const content = document.querySelector('.admin-content');
+    const ownerDisplay = document.querySelector('#ownerStatus');
+    const cardsTable = document.querySelector('#cardDetails');
+    const purchasedCountDisplay = document.querySelector('#purchasedCount');
+    const resetButton = document.querySelector('#resetButton');
+
+
+  async function initWeb3() {
+        if (window.ethereum) {
+            web3 = new Web3(window.ethereum);
+            try {
+                await ethereum.request({ method: 'eth_requestAccounts' });
+                contract = new web3.eth.Contract(abi, contractAddress);
+                await checkOwner();
+            } catch (error) {
+                console.error('MetaMask connection error:', error);
+                alert('Please ensure MetaMask is properly configured and connected.');
+            }
+        } else {
+            alert('Please install MetaMask to use this feature.');
+        }
+    }
+
+    async function checkOwner() {
+        try {
+            const accounts = await web3.eth.getAccounts();
+            const owner = await contract.methods.owner().call();
+            if (accounts[0].toLowerCase() === owner.toLowerCase()) {
+                ownerDisplay.textContent = 'Verified Owner: Access Granted.';
+                content.style.display = 'block'; // Affiche le contenu si l'utilisateur est le propriétaire
+            } else {
+                ownerDisplay.textContent = 'Access Denied: You are not the owner.';
+                content.style.display = 'none'; // Masque le contenu si l'utilisateur n'est pas le propriétaire
+            }
+        } catch (error) {
+            console.error('Error checking owner status:', error);
+        }
+    }
+
+
+    async function getCardDetails() {
+        const totalCards = 52;
+        cardsTable.innerHTML = '';
+        console.log("Fetching card details...");
+        for (let i = 0; i < totalCards; i++) {
+            const owner = await contract.methods.cardOwners(i).call();
+            const isLocked = await contract.methods.cardLocked(i).call();
+            const row = `<tr>
+                            <td>${i}</td>
+                            <td>${owner !== '0x0000000000000000000000000000000000000000' ? owner : 'Unowned'}</td>
+                            <td>${isLocked ? 'Locked' : 'Available'}</td>
+                         </tr>`;
+            cardsTable.innerHTML += row;
+        }
+        console.log("Card details fetched and displayed.");
+    }
+
+    async function updatePurchasedCardsCount() {
+        const totalCards = 52;
+        const purchasedCards = await contract.methods.totalCardsPurchased().call();
+        const remaining = totalCards - purchasedCards;
+        purchasedCountDisplay.textContent = `Purchased: ${purchasedCards}, Remaining: ${remaining}`;
+        console.log("Purchased cards count updated.");
+    }
+
+    function listenForWinner() {
+        console.log("Setting up winner listener...");
+        contract.events.WinnerPaid({
+            fromBlock: 'latest'
+        }, function(error, event) {
+            if (error) console.error(error);
+            else {
+                const winnerInfo = `Latest Winner: ${event.returnValues.winner} with Reward: ${web3.utils.fromWei(event.returnValues.amount, 'ether')} ETH`;
+                document.getElementById('winnerInfo').textContent = winnerInfo;
+                console.log("Winner info updated:", winnerInfo);
+            }
+        });
+    }
+
+    async function triggerDailyReset() {
+        try {
+            await contract.methods.resetGame().send({ from: ethereum.selectedAddress });
+            alert('Game has been successfully reset.');
+            updatePurchasedCardsCount();
+            getCardDetails();
+            console.log("Game reset successfully.");
+        } catch (error) {
+            console.error('Reset failed:', error);
+            alert('Reset failed. See console for details.');
+        }
+    }
+
+    resetButton.addEventListener('click', triggerDailyReset);
+
+    initWeb3();
+});
+</script>
+
+
+
+
+</body>
+</html>
