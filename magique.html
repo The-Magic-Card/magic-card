@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedCards = []; // Maintenant défini au niveau global
     const connectButton = document.querySelector('.wallet-btn');
     const contentContainer = document.querySelector('.container');
-    const contractAddress = '0x14f99FDA0BE668098E9B975d4CfA26CD40028F69'; // Adresse du contrat
+    const contractAddress = '0xa0f6B654A06d468C32311e7B86A54733c9631Dfb'; // Adresse du contrat
     const abi = [
 	{
 		"inputs": [],
@@ -146,9 +146,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		"inputs": [
 			{
 				"indexed": false,
-				"internalType": "uint8",
+				"internalType": "uint256",
 				"name": "cardId",
-				"type": "uint8"
+				"type": "uint256"
 			},
 			{
 				"indexed": false,
@@ -165,6 +165,39 @@ document.addEventListener('DOMContentLoaded', function() {
 		"inputs": [],
 		"name": "GameReset",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "cardIds",
+				"type": "uint256[]"
+			}
+		],
+		"name": "purchaseMultipleCards",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "resetGame",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "newPrice",
+				"type": "uint256"
+			}
+		],
+		"name": "setCardPrice",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -188,9 +221,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	{
 		"inputs": [
 			{
-				"internalType": "uint8",
+				"internalType": "uint256",
 				"name": "",
-				"type": "uint8"
+				"type": "uint256"
 			}
 		],
 		"name": "cardLocked",
@@ -207,9 +240,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	{
 		"inputs": [
 			{
-				"internalType": "uint8",
+				"internalType": "uint256",
 				"name": "",
-				"type": "uint8"
+				"type": "uint256"
 			}
 		],
 		"name": "cardOwners",
@@ -250,26 +283,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint8[]",
-				"name": "cardIds",
-				"type": "uint8[]"
-			}
-		],
-		"name": "purchaseMultipleCards",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "resetGame",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "rewardPool",
 		"outputs": [
@@ -280,19 +293,6 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "newPrice",
-				"type": "uint256"
-			}
-		],
-		"name": "setCardPrice",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
