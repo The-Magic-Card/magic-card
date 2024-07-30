@@ -125,7 +125,7 @@ const CARD_COST = 0.01; // Coût par carte en Ether
 let recentWinners = []; // Liste des 10 derniers gagnants
 
 // Adresse du contrat et ABI
-const contractAddress = '0x3a4d71b8C5ef5505AE1d9519825C81729dA32E34';
+const contractAddress = '0x1442453fCB18D5BDC431C9e4E7D163581F4eF5eD';
 const contractABI = [
 	{
 		"inputs": [
