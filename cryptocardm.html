@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<script src="https://cdn.jsdelivr.net/npm/web3@1.6.0/dist/web3.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link rel="stylesheet" href="crptcrd.css">
+<title>The Magic Crypto Card - Futuristic Crypto Gaming</title>
+</head>
+<body>
+<canvas id="digital-universe"></canvas>
+  <div class="container">
+    <header>
+      <h1>The Magic Crypto Card</h1>
+      <p class="subtitle">111 Unique Crypto Cards - Choose, Wait, Win!</p>
+      <p class="jackpot">Current Jackpot: 1 BNB!</p>
+    </header>
+
+    <div class="game-info">
+      <div class="info-item">
+        <h3>Selected</h3>
+        <p id="selected-count">0</p>
+      </div>
+      <div class="info-item">
+        <h3>Total Cost</h3>
+        <p id="total-cost">0 BNB</p>
+      </div>
+      <div class="info-item">
+        <h3>Remaining Cards</h3>
+        <p id="remaining-cards">111</p>
+      </div>
+    </div>
+
+    <div class="crypto-grid" id="crypto-grid">
+      <!-- We'll generate 120 unique cards dynamically using JavaScript -->
+    </div>
+
+    <button id="buy-button" disabled>Buy Selected Cards</button>
+
+    <div class="rules-section">
+      <h2>How to Play & Win</h2>
+      <div class="rules-content">
+        <ol>
+          <li>Select any number of available crypto cards from the grid.</li>
+          <li>Each card costs 0.01 BNB. The total cost will be displayed above.</li>
+          <li>Click the "Buy Selected Cards" button to purchase your chosen cards.</li>
+          <li>Once purchased, cards are marked as sold and cannot be bought again until the end.</li>
+          <li>The game continues until all cards are sold.</li>
+          <li>When all cards are sold a random player win the jackpot !</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="winners-section">
+      <h2>Recent Lucky Winners</h2>
+      <ul class="winners-list" id="winners-list">
+        <!-- We'll populate this list dynamically -->
+      </ul>
+    </div>
+  </div>
+  
+<script src="https://cdn.jsdelivr.net/npm/@metamask/detect-provider@1.0.3"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.0/web3.min.js"></script>
+<script type="text/javascript" src="cryptocard.js"></script>
+
+</body>
+</html>
