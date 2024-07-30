@@ -8,7 +8,7 @@ body {
   overflow-x: hidden;
   position: relative;
   min-height: 100vh;
-  background: url('img/roifuturiste.webp') no-repeat center center;
+  background: url('roifuturiste.webp') no-repeat center center;
   background-size: 100vw 290vh; /* Assure que l'image couvre tout l'arrière-plan sans être coupée */
 }
 .container {
